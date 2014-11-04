@@ -1,0 +1,106 @@
+.clear {
+    display: block;
+    content: "";
+    width: 100%;
+}
+
+#wpcontent {
+    padding: 0;
+}
+
+.ui-tabs, .ui-tabs-panel, .wrap {
+    padding: 0 !important;
+}
+
+div.tabs-wrapper ul li a {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+div.tabs-wrapper ul li.ui-state-active, div.tabs-wrapper ul li.ui-state-default {
+    background: none;
+    border: none;
+}
+
+div.tabs-wrapper ul li.ui-state-default a {
+    color: white;
+    background-color: #444;
+}
+
+div.tabs-wrapper ul li.ui-state-active a {
+    color: white;
+    background-color: black;
+}
+
+div.tabs-wrapper {
+    background: none;
+    background-color: #eee;
+    width: 94%;
+    margin: 0 auto;
+    min-height: 500px;
+}
+
+button {
+    border: none;
+    color: white;
+    background-color: #444;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: black;
+}
+
+input {
+    width: 300px;
+    border: 1px solid #ccc !important;
+    padding: 8px 15px;
+    color: #666 !important;
+    border-radius: 3px;
+}
+
+.wpsyn-option-form {
+    margin: 0 0 0 3px;
+    background-color: white;
+    display: inline-block;
+    padding: 20px;
+    border-radius: 5px;
+    width: 302px;
+}
+
+.wpsyn-option-form h2 {
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.wpsyn-option-form h3 {
+    font-size: 18px;
+    font-family: Ubuntu, sans-serif;
+    margin: 8px 0;
+}
+
+button#mailer-test-btn {
+    margin-bottom: 20px;
+}
+
+.after-form {
+    margin: 0 0 0 3px;
+    padding: 20px;
+    background-color: #ffffff;
+    display: inline-block;
+    width: 302px;
+}
+
+div.tab {
+    margin-bottom: 20px;
+}
+
+.loader-image {
+    width: 50px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
