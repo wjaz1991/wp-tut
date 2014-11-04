@@ -89,17 +89,20 @@ $bloggerOpts = get_option('wpsyn_options_blogger');
                 <h3>Blogger API key:</h3>
                 <input type="text" name="wpsyn_options_blogger[option_blogger_api_key]"
                        value="<?php echo esc_attr($bloggerOpts['option_blogger_api_key']); ?>" />
+                <h3>Blogger blog ID:</h3>
+                <input type="text" name="wpsyn_options_blogger[option_blogger_blog_id]"
+                       value="<?php echo esc_attr($bloggerOpts['option_blogger_blog_id']); ?>" />
                 <br><br>
                 <button type="submit">Save changes</button>
             </form>
             <div class="clear"></div>
             <div class="after-form">
                 <input type="hidden" value="<?php echo plugin_dir_url(__FILE__) . '../images/loader.GIF'; ?>" id="load-image" >
-                <button id="mailer-test-btn">Test configuration</button>
+                <button id="blogger-test-btn">Test configuration</button>
 
-                <div id="mailer-test-result"></div>
+                <div id="blogger-test-result"></div>
             </div>
-        </div> <!-- BLOGSPOT SETTINGS -->
+        </div> <!-- BLOGGER SETTINGS -->
         
         <div id="account-tabs-4" class="tab">
             <form class="wpsyn-option-form" action="options.php" method="post">

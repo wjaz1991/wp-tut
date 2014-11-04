@@ -156,4 +156,40 @@ jQuery(document).ready(function($) {
             }
         });
     });*/
+    
+    //-------------------------
+    //BLOGGER TEST
+    //-------------------------
+    $("#blogger-test-btn").on('click', function() {
+        $("#blogger-test-result").empty();
+        var image = '<img id="mailer-loading" class="loader-image" src="' + $("#load-image").val() + '">';
+        $("#blogger-test-result").append(image);
+        var data = {
+            'action': 'test_blogger',
+            'nonce': ajax_object.ajax_nonce
+        };
+
+        var request = $.ajax({
+            url: ajax_object.ajax_url,
+            data: data,
+            type: 'post',
+            dataType: 'json'
+        });
+
+        request.done(function(msg) {
+            $('#blogger-test-result').find('#mailer-loading').remove();
+            $("#blogger-test-result").empty();
+
+            if(msg.error) {
+                $("#blogger-test-result").addClass('error');
+                var text = '<h4> Failed to connect to the blog. </h4><p>Check your configuration, and try again.</p>';
+                $("#blogger-test-result").append(text);
+            }
+            if(msg.success) {
+                $("#blogger-test-result").addClass('updated');
+                var text = '<h4> Blogger configuration test passed and is ready to use</h4>';
+                $("#blogger-test-result").append(text);
+            }
+        });
+    });
 });

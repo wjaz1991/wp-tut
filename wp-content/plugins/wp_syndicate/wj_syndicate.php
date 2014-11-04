@@ -12,7 +12,6 @@ License: GPLv2
 require plugin_dir_path(__FILE__) . 'includes/PHPMailer/PHPMailerAutoload.php';
 require_once(plugin_dir_path(__FILE__) . 'includes/codebird/src/codebird.php');
 require_once(plugin_dir_path(__FILE__) . 'includes/facebook-php-sdk-v4-4.0/autoload.php');
-require_once(plugin_dir_path(__FILE__) . 'includes/google-api-php-client-master/autoload.php');
 
 use Codebird\Codebird;
 use Facebook\FacebookSession;
@@ -111,19 +110,6 @@ function wpsyn_page_accounts() {
     wp_enqueue_style('jquery-theme-style', plugin_dir_url(__FILE__) . 'css/jquery-ui/jquery-ui.css');
     wp_enqueue_style('plugin-style', plugin_dir_url(__FILE__) . 'css/style.css');
     
-    //testing blogger api
-    $bloggerOpts = get_option('wpsyn_options_blogger');
-    $googleClient = new Google_Client();
-    $googleClient->addScope("https://www.googleapis.com/auth/blogger");
-    //$googleClient->setApplicationName('WPSyn');
-    $googleClient->setDeveloperKey($bloggerOpts['option_blogger_api_key']);
-    
-    $blogger = new Google_Service_Blogger($googleClient);
-    
-    //$blogPosts = $blogger->getPosts();
-    
-    //var_dump($blogger);
-
     //including page for options management
     include(plugin_dir_path(__FILE__) . 'includes/accounts_page.php');
 }
@@ -182,6 +168,7 @@ function wpsyn_sanitize_facebook($input) {
 function wpsyn_sanitize_blogger($input) {
     $input['option_blogger_enabled'] = ($input['option_blogger_enabled'] == "yes") ? "yes" : "";
     $input['option_blogger_api_key'] = sanitize_text_field($input['option_blogger_api_key']);
+    $input['option_blogger_blog_id'] = sanitize_text_field($input['option_blogger_blog_id']);
 
     return $input;
 }
@@ -193,6 +180,7 @@ add_action('wp_ajax_test_mailer', 'test_mailer_action');
 add_action('wp_ajax_test_spinner', 'test_spinner_action');
 add_action('wp_ajax_test_twitter', 'test_twitter_action');
 add_action('wp_ajax_test_facebook', 'test_facebook_action');
+add_action('wp_ajax_test_blogger', 'test_blogger_action');
 
 function test_mailer_action() {
     $nonce = $_POST['nonce'];
@@ -346,6 +334,42 @@ function test_facebook_action() {
         $json['success'] = true;
         
         echo json_encode($json);*/
+    }
+    
+    die();
+}
+
+function test_blogger_action() {
+    $nonce = $_POST['nonce'];
+    
+    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
+        die();
+    }
+    
+    if(current_user_can('manage_options')) {
+        $json = array();
+        
+        //testing blogger api
+        $bloggerOpts = get_option('wpsyn_options_blogger');
+        $url = 'https://www.googleapis.com/blogger/v3/blogs/' . $bloggerOpts['option_blogger_blog_id'] . '?key=' . $bloggerOpts['option_blogger_api_key'];
+
+        //making a curl request
+        $request = curl_init();
+        curl_setopt($request, CURLOPT_URL, $url);
+        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = curl_exec($request);
+
+        $resultJson = json_decode($result, true);
+        
+        if(isset($resultJson['id']) && strlen($resultJson['id'])>0) {
+            $json['success'] = true;
+            $json['id'] = $resultJson['id'];
+        } else {
+            $json['error'] = true;
+        }
+        
+        echo json_encode($json);
     }
     
     die();
