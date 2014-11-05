@@ -122,14 +122,14 @@ jQuery(document).ready(function($) {
     //-------------------------
     
     //-------------------------
-    //FACEBOOK TEST
+    //WORDPRESS.COM TEST
     //-------------------------
-    /*$("#facebook-test-btn").on('click', function() {
-        $("#facebook-test-result").empty();
+    $("#wordpress-test-btn").on('click', function() {
+        $("#wordpress-test-result").empty();
         var image = '<img id="mailer-loading" class="loader-image" src="' + $("#load-image").val() + '">';
-        $("#facebook-test-result").append(image);
+        $("#wordpress-test-result").append(image);
         var data = {
-            'action': 'test_facebook',
+            'action': 'test_wordpress',
             'nonce': ajax_object.ajax_nonce
         };
 
@@ -141,21 +141,21 @@ jQuery(document).ready(function($) {
         });
 
         request.done(function(msg) {
-            $('#facebook-test-result').find('#mailer-loading').remove();
-            $("#facebook-test-result").empty();
+            $('#wordpress-test-result').find('#mailer-loading').remove();
+            $("#wordpress-test-result").empty();
 
             if(msg.error) {
-                $("#facebook-test-result").addClass('error');
-                var text = '<h4> Facebook configuration test failed </h4><p>Check your configuration, and try again.</p>';
-                $("#facebook-test-result").append(text);
+                $("#wordpress-test-result").addClass('error');
+                var text = '<h4> Wordpress.com configuration test failed </h4><p>Check your configuration, and try again.</p>';
+                $("#wordpress-test-result").append(text);
             }
             if(msg.success) {
-                $("#facebook-test-result").addClass('updated');
-                var text = '<h4> Facebook configuration test passed and is ready to use</h4>';
-                $("#facebook-test-result").append(text);
+                $("#wordpress-test-result").addClass('updated');
+                var text = '<h4> Wordpress.com configuration test passed and is ready to use</h4>';
+                $("#wordpress-test-result").append(text);
             }
         });
-    });*/
+    });
     
     //-------------------------
     //BLOGGER TEST

@@ -11,13 +11,8 @@ License: GPLv2
 
 require plugin_dir_path(__FILE__) . 'includes/PHPMailer/PHPMailerAutoload.php';
 require_once(plugin_dir_path(__FILE__) . 'includes/codebird/src/codebird.php');
-require_once(plugin_dir_path(__FILE__) . 'includes/facebook-php-sdk-v4-4.0/autoload.php');
 
 use Codebird\Codebird;
-use Facebook\FacebookSession;
-use Facebook\FacebookRequest;
-use Facebook\GraphUser;
-use Facebook\FacebookRequestException;
 
 
 //-------------------------
@@ -32,6 +27,35 @@ function wpsyn_install() {
 	if(version_compare($wp_version, '4.0', '<')) {
 		wp_die('This plugin requires Wordpress version 4.0 or higher.');
 	}
+        
+        wpsyn_create_table();
+}
+
+//function to create database table
+function wpsyn_create_table() {
+    global $wpdb;
+    
+    $tableName = $wpdb->prefix . 'wpsyn';
+    
+    $charsetCollate = '';
+    
+    if(!empty($wpdb->charset)) {
+        $charsetCollate = 'DEFAULT CHARACTER SET ' . $wpdb->charset;
+    }
+    
+    if(!empty($wpdb->collate)) {
+        $charsetCollate .= ' COLLATE ' . $wpdb->collate;
+    }
+    
+    $sql = "CREATE TABLE IF NOT EXISTS $tableName (
+            id int(10) unsigned NOT NULL AUTO_INCREMENT,
+            link text NOT NULL,
+            published datetime NOT NULL,
+            PRIMARY KEY id (id)
+          ) ENGINE=InnoDB $charsetCollate;";
+    
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
 }
 
 //-------------------------
@@ -86,7 +110,7 @@ function wpsyn_page_settings() {
 
     wp_enqueue_style('jquery-theme-style', plugin_dir_url(__FILE__) . 'css/jquery-ui/jquery-ui.css');
     wp_enqueue_style('plugin-style', plugin_dir_url(__FILE__) . 'css/style.css');
-
+    
     //including page for options management
     include(plugin_dir_path(__FILE__) . 'includes/settings_page.php');
 }
@@ -109,6 +133,76 @@ function wpsyn_page_accounts() {
 
     wp_enqueue_style('jquery-theme-style', plugin_dir_url(__FILE__) . 'css/jquery-ui/jquery-ui.css');
     wp_enqueue_style('plugin-style', plugin_dir_url(__FILE__) . 'css/style.css');
+    
+    //sending to wordpress.com
+    $wpOpts = get_option('wpsyn_options_wordpress');
+
+    $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
+    curl_setopt( $curl, CURLOPT_POST, true );
+    curl_setopt( $curl, CURLOPT_POSTFIELDS, array(
+        'client_id' => $wpOpts['option_wordpress_client_id'],
+        'client_secret' => $wpOpts['option_wordpress_client_secret'],
+        'grant_type' => 'password',
+        'username' => $wpOpts['option_wordpress_username'],
+        'password' => $wpOpts['option_wordpress_password']
+    ) );
+    curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
+    $auth = curl_exec( $curl );
+    $auth = json_decode($auth);
+    if(isset($auth->access_token)) {
+        $access_key = $auth->access_token;
+    }
+    var_dump($access_key);
+    
+    /*$wpReq = curl_init('https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/');
+    
+    $header = array();
+    $header[] = 'Content-type: application/x-www-form-urlencoded';
+    $header[] = 'authorization: Bearer ' . $access_key;
+
+    curl_setopt( $wpReq, CURLOPT_HTTPHEADER, $header);
+    curl_setopt( $wpReq, CURLOPT_POST, true );
+    curl_setopt( $wpReq, CURLOPT_POSTFIELDS, array(
+            'title' => 'Some post title',
+            'content' => 'Some example post content',
+            'tags' => 'from blog',
+            'categories' => 'from blog',
+        ));
+    curl_setopt( $wpReq, CURLOPT_RETURNTRANSFER, 1);
+    $auth = curl_exec( $wpReq );
+    
+    var_dump($auth);*/
+    
+    $options  = array (
+        'http' => 
+        array (
+          'ignore_errors' => true,
+          'method' => 'POST',
+          'header' => 
+          array (
+            0 => 'authorization: Bearer ' . $access_key,
+            1 => 'Content-Type: application/x-www-form-urlencoded',
+          ),
+          'content' => http_build_query(   
+            array (
+              'title' => 'Hello World',
+              'content' => 'Hello. I am a test post. I was created by the API',
+              'tags' => 'tests',
+              'categories' => 'API',
+            )
+          ),
+        ),
+      );
+
+      $context  = stream_context_create( $options );
+      $response = file_get_contents(
+        'https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/',
+        false,
+        $context
+      );
+      $response = json_decode( $response );
+      
+      var_dump($response);
     
     //including page for options management
     include(plugin_dir_path(__FILE__) . 'includes/accounts_page.php');
@@ -173,6 +267,16 @@ function wpsyn_sanitize_blogger($input) {
     return $input;
 }
 
+function wpsyn_sanitize_wordpress($input) {
+    $input['option_wordpress_enabled'] = ($input['option_wordpress_enabled'] == "yes") ? "yes" : "";
+    $input['option_wordpress_client_id'] = sanitize_text_field($input['option_wordpress_client_id']);
+    $input['option_wordpress_client_secret'] = sanitize_text_field($input['option_wordpress_client_secret']);
+    $input['option_wordpress_username'] = sanitize_text_field($input['option_wordpress_username']);
+    $input['option_wordpress_password'] = sanitize_text_field($input['option_wordpress_password']);
+
+    return $input;
+}
+
 /*----------------------------------
 AJAX CALLBACKS
 ----------------------------------*/
@@ -181,6 +285,7 @@ add_action('wp_ajax_test_spinner', 'test_spinner_action');
 add_action('wp_ajax_test_twitter', 'test_twitter_action');
 add_action('wp_ajax_test_facebook', 'test_facebook_action');
 add_action('wp_ajax_test_blogger', 'test_blogger_action');
+add_action('wp_ajax_test_wordpress', 'test_wordpress_action');
 
 function test_mailer_action() {
     $nonce = $_POST['nonce'];
@@ -373,4 +478,111 @@ function test_blogger_action() {
     }
     
     die();
+}
+
+function test_wordpress_action() {
+    $nonce = $_POST['nonce'];
+    
+    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
+        die();
+    }
+    
+    $json = array();
+    
+    if(current_user_can('manage_options')) {
+        $wpOpts = get_option('wpsyn_options_wordpress');
+
+        $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
+        curl_setopt( $curl, CURLOPT_POST, true );
+        curl_setopt( $curl, CURLOPT_POSTFIELDS, array(
+            'client_id' => $wpOpts['option_wordpress_client_id'],
+            'client_secret' => $wpOpts['option_wordpress_client_secret'],
+            'grant_type' => 'password',
+            'username' => $wpOpts['option_wordpress_username'],
+            'password' => $wpOpts['option_wordpress_password']
+        ) );
+        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
+        $auth = curl_exec( $curl );
+        $auth = json_decode($auth);
+        if(isset($auth->access_token)) {
+            $access_key = $auth->access_token;
+        }
+        
+        if(isset($access_key) && strlen($access_key) > 0) {
+            $json['success'] = true;
+        } else {
+            $json['error'] = true;
+        }
+        
+        echo json_encode($json);
+    }
+    
+    die();
+}
+
+
+//---------------------------------------
+//SENDING POST TO THE ADDED ACCOUNTS
+//---------------------------------------
+add_action('publish_post', 'wpsyn_send_to_socials', 10, 2);
+
+function wpsyn_send_to_socials($ID, $post) {
+    $content = $post->post_content;
+    $title = $post->post_title;
+    
+    $postTitle = $post->post_title;
+    
+    //sending to twitter
+    if(strlen($title) > 140) {
+        $title = substr($title, 0, 140);
+    }
+    
+    $title .= " " . get_permalink($post->id);
+    
+    $twitterOpts = get_option('wpsyn_options_twitter');
+
+    Codebird::setConsumerKey($twitterOpts['option_twitter_key'], $twitterOpts['option_twitter_secret']);
+
+    $cb = Codebird::getInstance();
+
+    $cb->setToken($twitterOpts['option_twitter_access_token'], $twitterOpts['option_twitter_access_secret']);
+
+    $reply = $cb->statuses_update('status=' . $title);
+    
+    //sending to wordpress.com
+    $wpOpts = get_option('wpsyn_options_wordpress');
+
+    $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
+    curl_setopt( $curl, CURLOPT_POST, true );
+    curl_setopt( $curl, CURLOPT_POSTFIELDS, array(
+        'client_id' => $wpOpts['option_wordpress_client_id'],
+        'client_secret' => $wpOpts['option_wordpress_client_secret'],
+        'grant_type' => 'password',
+        'username' => $wpOpts['option_wordpress_username'],
+        'password' => $wpOpts['option_wordpress_password']
+    ) );
+    curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
+    $auth = curl_exec( $curl );
+    $auth = json_decode($auth);
+    if(isset($auth->access_token)) {
+        $access_key = $auth->access_token;
+    }
+    
+    $wpReq = curl_init('https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/');
+    
+    $header = array();
+    $header[] = 'Content-type: application/x-www-form-urlencoded';
+    $header[] = 'Authorization: Bearer ' . $access_key;
+
+    curl_setopt( $wpReq, CURLOPT_HTTPHEADER, $header);
+    curl_setopt( $wpReq, CURLOPT_POST, true );
+    curl_setopt( $wpReq, CURLOPT_POSTFIELDS, array(
+        'title' => $postTitle,
+        'content' => $content,
+        'tags' => 'from blog',
+        'categories' => 'from blog',
+    ) );
+    curl_setopt( $wpReq, CURLOPT_RETURNTRANSFER, 1);
+    $auth = curl_exec( $wpReq );
+    //$auth = json_decode($auth);
 }

@@ -3,6 +3,7 @@
 $twitterOpts = get_option('wpsyn_options_twitter');
 $facebookOpts = get_option('wpsyn_options_facebook');
 $bloggerOpts = get_option('wpsyn_options_blogger');
+$wordpressOpts = get_option('wpsyn_options_wordpress');
 
 ?>
     
@@ -104,48 +105,36 @@ $bloggerOpts = get_option('wpsyn_options_blogger');
             </div>
         </div> <!-- BLOGGER SETTINGS -->
         
+        <!-- WORDPRESS.COM SETTINGS -->
         <div id="account-tabs-4" class="tab">
             <form class="wpsyn-option-form" action="options.php" method="post">
-                <h2>Insert notification settings</h2>
-                <?php settings_fields('wpsyn-options-mailer'); ?>
-                <h3>SMTP Server:</h3>
-                <input type="text" name="wpsyn_options_mailer[option_mailer_server]"
-                       value="<?php echo esc_attr($mailerOpts['option_mailer_server']); ?>" />
-                <h3>Connection port:</h3>
-                <input type="text" name="wpsyn_options_mailer[option_mailer_port]"
-                       value="<?php echo esc_attr($mailerOpts['option_mailer_port']); ?>" />
-                <h3>Username:</h3>
-                <input type="text" name="wpsyn_options_mailer[option_mailer_username]"
-                       value="<?php echo esc_attr($mailerOpts['option_mailer_username']); ?>" />
-                <h3>Password:</h3>
-                <input type="text" name="wpsyn_options_mailer[option_mailer_password]"
-                       value="<?php echo esc_attr($mailerOpts['option_mailer_password']); ?>" />
-                <h3>Email to send notifications:</h3>
-                <input type="text" name="wpsyn_options_mailer[option_mailer_email]"
-                       value="<?php echo esc_attr($mailerOpts['option_mailer_email']); ?>" />
-                <h3>Enable SMTP authentication?</h3>
-                <input type="radio" <?php echo ($mailerOpts['option_mailer_authentication'] == 'yes') ? 'checked' : ''; ?>
-                       name="wpsyn_options_mailer[option_mailer_authentication]"
-                       value="yes" /> yes
-                <input type="radio" <?php echo ($mailerOpts['option_mailer_authentication'] == 'no') ? 'checked' : ''; ?>
-                       name="wpsyn_options_mailer[option_mailer_authentication]"
-                       value="no" /> no
-                <h3>Select encryption method:</h3>
-                <input type="radio" <?php echo ($mailerOpts['option_mailer_encryption'] == 'ssl') ? 'checked' : ''; ?>
-                       name="wpsyn_options_mailer[option_mailer_encryption]"
-                       value="ssl" /> ssl
-                <input type="radio" <?php echo ($mailerOpts['option_mailer_encryption'] == 'tls') ? 'checked' : ''; ?>
-                       name="wpsyn_options_mailer[option_mailer_encryption]"
-                       value="tls" /> tls
+                <h2>Insert Wordpress.com settings</h2>
+                <?php settings_fields('wpsyn-options-wordpress'); ?>
+                <h3>Enable Wordpress.com integration?</h3>
+                <input type="checkbox" <?php    checked($wordpressOpts['option_wordpress_enabled'], 'yes'); ?> 
+                       name="wpsyn_options_wordpress[option_wordpress_enabled]"
+                       value="yes" />
+                <h3>Client ID:</h3>
+                <input type="text" name="wpsyn_options_wordpress[option_wordpress_client_id]"
+                       value="<?php echo esc_attr($wordpressOpts['option_wordpress_client_id']); ?>" />
+                <h3>Client Secret:</h3>
+                <input type="text" name="wpsyn_options_wordpress[option_wordpress_client_secret]"
+                       value="<?php echo esc_attr($wordpressOpts['option_wordpress_client_secret']); ?>" />
+                <h3>Wordpress.com username:</h3>
+                <input type="text" name="wpsyn_options_wordpress[option_wordpress_username]"
+                       value="<?php echo esc_attr($wordpressOpts['option_wordpress_username']); ?>"/>
+                <h3>Wordpress.com password:</h3>
+                <input type="text" name="wpsyn_options_wordpress[option_wordpress_password]"
+                       value="<?php echo esc_attr($wordpressOpts['option_wordpress_password']); ?>"/>
                 <br><br>
                 <button type="submit">Save changes</button>
             </form>
             <div class="clear"></div>
             <div class="after-form">
                 <input type="hidden" value="<?php echo plugin_dir_url(__FILE__) . '../images/loader.GIF'; ?>" id="load-image" >
-                <button id="mailer-test-btn">Test configuration</button>
+                <button id="wordpress-test-btn">Test configuration</button>
 
-                <div id="mailer-test-result"></div>
+                <div id="wordpress-test-result"></div>
             </div>
         </div>
     </div>
