@@ -1,16 +1,17 @@
 <?php
 /*
 Plugin Name: WPSyn
-Plugin URI: http://wjaz.pl
+Plugin URI: http://polcode.pl
 Description: Plugin for post syndication to Facebook, Twitter, Google Blogspot, and Wordpress.com
 Version: 1.0
 Author: Wojciech Jazgara
-Author URI: http://wjaz.pl
+Author URI: http://polcode.pl
 License: GPLv2
 */
 
 require plugin_dir_path(__FILE__) . 'includes/PHPMailer/PHPMailerAutoload.php';
 require_once(plugin_dir_path(__FILE__) . 'includes/codebird/src/codebird.php');
+require_once(plugin_dir_path(__FILE__) . 'includes/google-api-php-client-master/autoload.php');
 
 use Codebird\Codebird;
 
@@ -111,6 +112,109 @@ function wpsyn_page_settings() {
     wp_enqueue_style('jquery-theme-style', plugin_dir_url(__FILE__) . 'css/jquery-ui/jquery-ui.css');
     wp_enqueue_style('plugin-style', plugin_dir_url(__FILE__) . 'css/style.css');
     
+    //PUBLISHING ON BLOGGER.COM
+    /*$bloggerOpts = get_option('wpsyn_options_blogger');
+    
+    $scope = 'blogger.posts.insert';
+    $redirect = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+    $state = 'some state';
+    $access_type = 'online';
+    
+    $url = "https://accounts.google.com/o/oauth2/auth?
+            scope=" . $scope . "&
+            state=" . $state . "&
+            redirect_uri=" . $redirect . "&
+            response_type=code&
+            client_id=" . $bloggerOpts['option_blogger_client_id'] . "&
+            approval_prompt=auto&response_type=code";
+    
+    var_dump($url);
+    
+    $req = curl_init();
+    
+    curl_setopt($req, CURLOPT_URL, $url);
+    curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
+    
+    $result = curl_exec($req);
+    
+    var_dump($result);*/
+    
+    $fbOpts = get_option('wpsyn_options_facebook');
+    
+    ?>
+<script>
+    jQuery(document).ready(function($) {
+    var status = '';
+    
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : <?php echo $fbOpts['option_facebook_app_id']; ?>,
+            xfbml      : true,
+            version    : 'v2.1'
+        });
+        
+        alert('after init');
+        
+        (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        //});
+    }
+    
+    //jQuery(document).ready(function($) {
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    alert('logged');
+                    var uid = response.authResponse.userID;
+                    var accessToken = response.authResponse.accessToken;
+
+                    var data = {
+                        'caption': 'Some title',
+                        'message': 'Some message',
+                        'link': 'Some link'
+                    };
+                    
+                    var body = 'Reading JS SDK documentation';
+                    FB.api('/me/feed', 'post', { message: body }, function(response) {
+                      if (!response || response.error) {
+                        alert('Error occured');
+                      } else {
+                        alert('Post ID: ' + response.id);
+                      }
+                    });
+
+                    /*FB.api('/me/feed', 'post', data, function() {});
+                    status = 'connected';*/
+                } else {
+                    alert('not logged');
+                    FB.login(function(){
+                        var data = {
+                            'caption': 'Some title',
+                            'message': 'Some message',
+                            'link': 'Some link'
+                        };
+                        
+                        var body = 'Reading JS SDK documentation';
+                        FB.api('/me/feed', 'post', { message: body }, function(response) {
+                          if (!response || response.error) {
+                            alert('Error occured');
+                          } else {
+                            alert('Post ID: ' + response.id);
+                          }
+                        });
+
+                        //FB.api('/me/feed', 'post', data, function() {});
+                    }, {scope: 'public_profile, publish_stream'});
+                }
+            });
+    });
+</script>
+<?php
+    
     //including page for options management
     include(plugin_dir_path(__FILE__) . 'includes/settings_page.php');
 }
@@ -133,76 +237,6 @@ function wpsyn_page_accounts() {
 
     wp_enqueue_style('jquery-theme-style', plugin_dir_url(__FILE__) . 'css/jquery-ui/jquery-ui.css');
     wp_enqueue_style('plugin-style', plugin_dir_url(__FILE__) . 'css/style.css');
-    
-    //sending to wordpress.com
-    $wpOpts = get_option('wpsyn_options_wordpress');
-
-    $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
-    curl_setopt( $curl, CURLOPT_POST, true );
-    curl_setopt( $curl, CURLOPT_POSTFIELDS, array(
-        'client_id' => $wpOpts['option_wordpress_client_id'],
-        'client_secret' => $wpOpts['option_wordpress_client_secret'],
-        'grant_type' => 'password',
-        'username' => $wpOpts['option_wordpress_username'],
-        'password' => $wpOpts['option_wordpress_password']
-    ) );
-    curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
-    $auth = curl_exec( $curl );
-    $auth = json_decode($auth);
-    if(isset($auth->access_token)) {
-        $access_key = $auth->access_token;
-    }
-    var_dump($access_key);
-    
-    /*$wpReq = curl_init('https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/');
-    
-    $header = array();
-    $header[] = 'Content-type: application/x-www-form-urlencoded';
-    $header[] = 'authorization: Bearer ' . $access_key;
-
-    curl_setopt( $wpReq, CURLOPT_HTTPHEADER, $header);
-    curl_setopt( $wpReq, CURLOPT_POST, true );
-    curl_setopt( $wpReq, CURLOPT_POSTFIELDS, array(
-            'title' => 'Some post title',
-            'content' => 'Some example post content',
-            'tags' => 'from blog',
-            'categories' => 'from blog',
-        ));
-    curl_setopt( $wpReq, CURLOPT_RETURNTRANSFER, 1);
-    $auth = curl_exec( $wpReq );
-    
-    var_dump($auth);*/
-    
-    $options  = array (
-        'http' => 
-        array (
-          'ignore_errors' => true,
-          'method' => 'POST',
-          'header' => 
-          array (
-            0 => 'authorization: Bearer ' . $access_key,
-            1 => 'Content-Type: application/x-www-form-urlencoded',
-          ),
-          'content' => http_build_query(   
-            array (
-              'title' => 'Hello World',
-              'content' => 'Hello. I am a test post. I was created by the API',
-              'tags' => 'tests',
-              'categories' => 'API',
-            )
-          ),
-        ),
-      );
-
-      $context  = stream_context_create( $options );
-      $response = file_get_contents(
-        'https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/',
-        false,
-        $context
-      );
-      $response = json_decode( $response );
-      
-      var_dump($response);
     
     //including page for options management
     include(plugin_dir_path(__FILE__) . 'includes/accounts_page.php');
@@ -263,6 +297,8 @@ function wpsyn_sanitize_blogger($input) {
     $input['option_blogger_enabled'] = ($input['option_blogger_enabled'] == "yes") ? "yes" : "";
     $input['option_blogger_api_key'] = sanitize_text_field($input['option_blogger_api_key']);
     $input['option_blogger_blog_id'] = sanitize_text_field($input['option_blogger_blog_id']);
+    $input['option_blogger_client_id'] = sanitize_text_field($input['option_blogger_client_id']);
+    $input['option_blogger_client_secret'] = sanitize_text_field($input['option_blogger_client_secret']);
 
     return $input;
 }
@@ -273,6 +309,7 @@ function wpsyn_sanitize_wordpress($input) {
     $input['option_wordpress_client_secret'] = sanitize_text_field($input['option_wordpress_client_secret']);
     $input['option_wordpress_username'] = sanitize_text_field($input['option_wordpress_username']);
     $input['option_wordpress_password'] = sanitize_text_field($input['option_wordpress_password']);
+    $input['option_wordpress_blog_id'] = sanitize_text_field($input['option_wordpress_blog_id']);
 
     return $input;
 }
@@ -287,238 +324,7 @@ add_action('wp_ajax_test_facebook', 'test_facebook_action');
 add_action('wp_ajax_test_blogger', 'test_blogger_action');
 add_action('wp_ajax_test_wordpress', 'test_wordpress_action');
 
-function test_mailer_action() {
-    $nonce = $_POST['nonce'];
-
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-
-    if(current_user_can('manage_options')) {
-        $mailer = new PHPMailer;
-
-        $mailerOpts = get_option('wpsyn_options_mailer');
-
-        $mailer->isSMTP();
-
-        //enable SMTP authentication
-        if($mailerOpts['option_mailer_authentication'] == 'yes') {
-            $mailer->SMTPAuth = true;
-        }
-
-        //setting encryption
-        $mailer->SMTPSecure = $mailerOpts['option_mailer_encryption'];
-
-        $mailer->Host = $mailerOpts['option_mailer_server'];
-        $mailer->Username = $mailerOpts['option_mailer_username'];
-        $mailer->Password = $mailerOpts['option_mailer_password'];
-        $mailer->Port = $mailerOpts['option_mailer_port'];
-
-        $mailer->addAddress($mailerOpts['option_mailer_email']);
-        $mailer->WordWrap = 50;
-        $mailer->isHTML(true);
-
-        $mailer->Subject = 'WPSyn syndication';
-        $mailer->Body    = 'This is a test message from <b>WPSyn</b> Wordpress plugin';
-        $mailer->AltBody = 'This is a test message from WPSyn Wordpress plugin';
-
-        $json = array();
-        if(!$mailer->send()) {
-            $json['error'] = true;
-            $json['message'] = $mailer->ErrorInfo;
-        } else {
-            $json['success'] = true;
-        }
-
-        echo json_encode($json);
-
-        die();
-    }
-
-    die();
-}
-
-function test_spinner_action() {
-    $nonce = $_POST['nonce'];
-
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-
-    if(current_user_can('manage_options')) {
-        $spinnerOpts = get_option('wpsyn_options_spinner');
-
-        $post = 'Real Madrid is the best team in the world at the moment. They play beautiful and effective football.';
-
-        $requestUrl = 'http://api.spinnerchief.com:443/apikey=' . $spinnerOpts['option_spinner_key'] .
-            '&username=' . $spinnerOpts['option_spinner_username'] .
-            '&password=' . $spinnerOpts['option_spinner_password'] .
-            '&spintype=1&spinfreq=2&Orderly=1';
-
-        $request = curl_init();
-        curl_setopt($request, CURLOPT_URL, $requestUrl);
-        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($request, CURLOPT_POST, true);
-        curl_setopt($request, CURLOPT_POSTFIELDS, $post);
-
-        $result = curl_exec($request);
-
-        $test = substr($result, 0, 6);
-
-        $json = array();
-        if ($test != 'error=') {
-            $json['success'] = true;
-            $json['message'] = $result;
-        } else {
-            $json['error'] = true;
-            $json['message'] = substr($result, 6);
-        }
-
-        echo json_encode($json);
-    }
-
-    die();
-}
-
-function test_twitter_action() {
-    $nonce = $_POST['nonce'];
-    
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-    
-    if(current_user_can('manage_options')) {
-        $twitterOpts = get_option('wpsyn_options_twitter');
-
-        Codebird::setConsumerKey($twitterOpts['option_twitter_key'], $twitterOpts['option_twitter_secret']);
-
-        $cb = Codebird::getInstance();
-
-        $cb->setToken($twitterOpts['option_twitter_access_token'], $twitterOpts['option_twitter_access_secret']);
-
-        $reply = $cb->account_verifyCredentials();
-
-        $json = array();
-        if(!isset($reply->id)) {
-            $json['error'] = true;
-        } else {
-            $json['success'] = true;
-            $json['id'] = $reply->id;
-        }
-        
-        echo json_encode($json);
-    }
-    
-    die();
-}
-
-function test_facebook_action() {
-    $nonce = $_POST['nonce'];
-    
-    $facebookOpts = get_option('wpsyn_options_facebook');
-    
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-    
-    if(current_user_can('manage_options')) {
-        FacebookSession::setDefaultApplication($facebookOpts['option_facebook_app_id'], $facebookOpts['option_facebook_app_secret']);
-        $session = new FacebookSession($facebookOpts['option_facebook_access_token']);
-        
-        try {
-            $me = (new FacebookRequest(
-              $session, 'GET', '/me'
-            ))->execute()->getGraphObject(GraphUser::className());
-            echo $me->getName();
-          } catch (FacebookRequestException $e) {
-            var_dump($e);
-          } catch (\Exception $e) {
-            var_dump($e);
-          }
-        /*$json = array();
-        $json['success'] = true;
-        
-        echo json_encode($json);*/
-    }
-    
-    die();
-}
-
-function test_blogger_action() {
-    $nonce = $_POST['nonce'];
-    
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-    
-    if(current_user_can('manage_options')) {
-        $json = array();
-        
-        //testing blogger api
-        $bloggerOpts = get_option('wpsyn_options_blogger');
-        $url = 'https://www.googleapis.com/blogger/v3/blogs/' . $bloggerOpts['option_blogger_blog_id'] . '?key=' . $bloggerOpts['option_blogger_api_key'];
-
-        //making a curl request
-        $request = curl_init();
-        curl_setopt($request, CURLOPT_URL, $url);
-        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($request);
-
-        $resultJson = json_decode($result, true);
-        
-        if(isset($resultJson['id']) && strlen($resultJson['id'])>0) {
-            $json['success'] = true;
-            $json['id'] = $resultJson['id'];
-        } else {
-            $json['error'] = true;
-        }
-        
-        echo json_encode($json);
-    }
-    
-    die();
-}
-
-function test_wordpress_action() {
-    $nonce = $_POST['nonce'];
-    
-    if(!wp_verify_nonce($nonce, 'wpsyn-ajax-nonce')) {
-        die();
-    }
-    
-    $json = array();
-    
-    if(current_user_can('manage_options')) {
-        $wpOpts = get_option('wpsyn_options_wordpress');
-
-        $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
-        curl_setopt( $curl, CURLOPT_POST, true );
-        curl_setopt( $curl, CURLOPT_POSTFIELDS, array(
-            'client_id' => $wpOpts['option_wordpress_client_id'],
-            'client_secret' => $wpOpts['option_wordpress_client_secret'],
-            'grant_type' => 'password',
-            'username' => $wpOpts['option_wordpress_username'],
-            'password' => $wpOpts['option_wordpress_password']
-        ) );
-        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
-        $auth = curl_exec( $curl );
-        $auth = json_decode($auth);
-        if(isset($auth->access_token)) {
-            $access_key = $auth->access_token;
-        }
-        
-        if(isset($access_key) && strlen($access_key) > 0) {
-            $json['success'] = true;
-        } else {
-            $json['error'] = true;
-        }
-        
-        echo json_encode($json);
-    }
-    
-    die();
-}
+include( plugin_dir_path(__FILE__) . 'includes/test_functions.php');
 
 
 //---------------------------------------
@@ -532,7 +338,7 @@ function wpsyn_send_to_socials($ID, $post) {
     
     $postTitle = $post->post_title;
     
-    //sending to twitter
+    //PUBLISHING ON TWITTER
     if(strlen($title) > 140) {
         $title = substr($title, 0, 140);
     }
@@ -549,7 +355,7 @@ function wpsyn_send_to_socials($ID, $post) {
 
     $reply = $cb->statuses_update('status=' . $title);
     
-    //sending to wordpress.com
+    //PUBLISHING ON WORDPRESS.COM BLOG
     $wpOpts = get_option('wpsyn_options_wordpress');
 
     $curl = curl_init('https://public-api.wordpress.com/oauth2/token');
@@ -566,23 +372,44 @@ function wpsyn_send_to_socials($ID, $post) {
     $auth = json_decode($auth);
     if(isset($auth->access_token)) {
         $access_key = $auth->access_token;
+    
+        $options  = array (
+            'http' => 
+            array (
+              'ignore_errors' => true,
+              'method' => 'POST',
+              'header' => 
+              array (
+                0 => 'authorization: Bearer ' . $access_key,
+                1 => 'Content-Type: application/x-www-form-urlencoded',
+              ),
+              'content' => http_build_query(   
+                array (
+                  'title' => $post->post_title,
+                  'content' => $post->post_content,
+                  'tags' => 'wordpress.dev.com, from main',
+                  'categories' => 'Main Blog',
+                )
+              ),
+            ),
+          );
+
+          $context  = stream_context_create( $options );
+          $response = file_get_contents(
+            'https://public-api.wordpress.com/rest/v1/sites/' . $wpOpts['option_wordpress_blog_id'] . '/posts/new/',
+            false,
+            $context
+          );
+          $response = json_decode( $response );
     }
     
-    $wpReq = curl_init('https://public-api.wordpress.com/rest/v1/sites/78278358/posts/new/');
+    //PUBLISHING ON BLOGGER.COM
+    $bloggerOpts = get_option('wpsyn_options_blogger');
     
-    $header = array();
-    $header[] = 'Content-type: application/x-www-form-urlencoded';
-    $header[] = 'Authorization: Bearer ' . $access_key;
-
-    curl_setopt( $wpReq, CURLOPT_HTTPHEADER, $header);
-    curl_setopt( $wpReq, CURLOPT_POST, true );
-    curl_setopt( $wpReq, CURLOPT_POSTFIELDS, array(
-        'title' => $postTitle,
-        'content' => $content,
-        'tags' => 'from blog',
-        'categories' => 'from blog',
-    ) );
-    curl_setopt( $wpReq, CURLOPT_RETURNTRANSFER, 1);
-    $auth = curl_exec( $wpReq );
-    //$auth = json_decode($auth);
+    $client = new Google_Client();
+    $client->setApplicationName("WPSyn");
+    $client->setDeveloperKey($bloggerOpts['option_blogger_api_key']);
+    
+    $blogger = new Google_Service_Blogger($client);
+    
 }

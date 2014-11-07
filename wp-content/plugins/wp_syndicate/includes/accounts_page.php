@@ -93,6 +93,12 @@ $wordpressOpts = get_option('wpsyn_options_wordpress');
                 <h3>Blogger blog ID:</h3>
                 <input type="text" name="wpsyn_options_blogger[option_blogger_blog_id]"
                        value="<?php echo esc_attr($bloggerOpts['option_blogger_blog_id']); ?>" />
+                <h3>Blogger client ID:</h3>
+                <input type="text" name="wpsyn_options_blogger[option_blogger_client_id]"
+                       value="<?php echo esc_attr($bloggerOpts['option_blogger_client_id']); ?>" />
+                <h3>Blogger client secret:</h3>
+                <input type="text" name="wpsyn_options_blogger[option_blogger_client_secret]"
+                       value="<?php echo esc_attr($bloggerOpts['option_blogger_client_secret']); ?>" />
                 <br><br>
                 <button type="submit">Save changes</button>
             </form>
@@ -120,6 +126,9 @@ $wordpressOpts = get_option('wpsyn_options_wordpress');
                 <h3>Client Secret:</h3>
                 <input type="text" name="wpsyn_options_wordpress[option_wordpress_client_secret]"
                        value="<?php echo esc_attr($wordpressOpts['option_wordpress_client_secret']); ?>" />
+                <h3>Wordpress.com blog ID:</h3>
+                <input type="text" name="wpsyn_options_wordpress[option_wordpress_blog_id]"
+                       value="<?php echo esc_attr($wordpressOpts['option_wordpress_blog_id']); ?>"/>
                 <h3>Wordpress.com username:</h3>
                 <input type="text" name="wpsyn_options_wordpress[option_wordpress_username]"
                        value="<?php echo esc_attr($wordpressOpts['option_wordpress_username']); ?>"/>
