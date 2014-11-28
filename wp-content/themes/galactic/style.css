@@ -1,0 +1,338 @@
+/*
+Theme Name: Galactic
+Theme URI: http://wjaz.pl
+Description: Galaxy inspired theme
+Version: 1.0
+Author: Wojciech Jazgara
+Author URI: http://wjaz.pl
+*/
+/*
+FILE CONTAINING GLOBAL VARIABLES FOR THE WHOLE THEME
+*/
+@import url("fonts/LatoLatin/LatoLatin-Regular.css");
+/* line 14, sass/style.scss */
+.container-fluid {
+  padding: 0;
+}
+
+/* line 18, sass/style.scss */
+body, html {
+  height: 100%;
+}
+
+/* line 22, sass/style.scss */
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #F7FBC9;
+  font-family: 'LatoLatin';
+}
+
+/* line 30, sass/style.scss */
+a {
+  color: black;
+}
+
+/* line 34, sass/style.scss */
+.clear, .group:after {
+  display: block;
+  clear: both;
+  content: '.';
+  visibility: hidden;
+  height: 0;
+}
+
+/* line 43, sass/style.scss */
+#main-header {
+  height: 80px;
+  background-color: #4C2A05;
+  color: white;
+}
+/* line 48, sass/style.scss */
+#main-header #header-logo {
+  width: 20%;
+  float: left;
+  border-bottom: 4px solid black;
+  height: 80px;
+}
+/* line 54, sass/style.scss */
+#main-header #header-logo h1 {
+  font-size: 40px;
+  line-height: 80px;
+  margin: auto;
+  padding-left: 15px;
+  color: #FF8B08;
+  font-weight: bold;
+}
+/* line 64, sass/style.scss */
+#main-header nav {
+  height: 80px;
+  float: right;
+  width: 80%;
+  border-bottom: 4px solid black;
+}
+/* line 70, sass/style.scss */
+#main-header nav ul {
+  margin: 0;
+  list-style-type: none;
+  display: block;
+  position: relative;
+}
+/* line 76, sass/style.scss */
+#main-header nav ul li {
+  float: right;
+  display: inline-block;
+}
+/* line 80, sass/style.scss */
+#main-header nav ul li a {
+  float: right;
+  display: block;
+  line-height: 80px;
+  padding: 0 15px;
+  font-size: 25px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #D8A166;
+  font-weight: bold;
+}
+/* line 92, sass/style.scss */
+#main-header nav ul li a:hover {
+  background-color: #000;
+}
+/* line 97, sass/style.scss */
+#main-header nav ul li#magic-line {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 4px;
+  background-color: red;
+}
+
+/* line 109, sass/style.scss */
+.search-form {
+  width: 100%;
+}
+/* line 112, sass/style.scss */
+.search-form form {
+  float: right;
+  padding: 5px 0 5px 0;
+}
+
+/* line 118, sass/style.scss */
+#page-wrap {
+  min-height: 100%;
+  margin-bottom: -50px;
+}
+
+/* line 123, sass/style.scss */
+#page-wrap:after {
+  content: "";
+  display: block;
+  height: 50px;
+}
+
+/* line 129, sass/style.scss */
+footer {
+  border-top: 4px solid black;
+  background-color: #4C2A05;
+  height: 50px;
+  color: #D8A166;
+  text-align: center;
+}
+
+/* line 137, sass/style.scss */
+.post-thumbnail-home {
+  width: auto;
+  height: 300px;
+  background-size: cover;
+  position: relative;
+}
+
+/* line 144, sass/style.scss */
+.overlay {
+  opacity: 0;
+}
+
+/* line 148, sass/style.scss */
+.post-thumbnail {
+  width: 100%;
+  margin: 0;
+}
+/* line 152, sass/style.scss */
+.post-thumbnail img {
+  width: 100%;
+  height: auto;
+}
+
+/* line 159, sass/style.scss */
+.post-thumbnail-home:hover .overlay {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  opacity: 0.4;
+  position: absolute;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* line 169, sass/style.scss */
+#scrollUp {
+  background-image: url(images/top.png);
+  width: 38px;
+  height: 38px;
+  bottom: 5px;
+  right: 5px;
+}
+
+/* line 179, sass/style.scss */
+.pager li a {
+  background-color: #4C2A05;
+  color: #D8A166;
+  border: 0 none;
+}
+/* line 185, sass/style.scss */
+.pager li a:hover {
+  background-color: black;
+}
+
+/* line 191, sass/style.scss */
+.row {
+  overflow: hidden;
+}
+
+/* line 195, sass/style.scss */
+[class*="col-"] {
+  margin-bottom: -99999px;
+  padding-bottom: 99999px;
+}
+
+/* line 200, sass/style.scss */
+.post-pagination {
+  position: relative;
+}
+/* line 203, sass/style.scss */
+.post-pagination a {
+  display: block;
+  background-color: #D8A166;
+  border-radius: 5px;
+  transition: background-color 0.5s ease-in-out;
+}
+/* line 210, sass/style.scss */
+.post-pagination a:hover {
+  background-color: #666;
+  transition: background-color 0.5s ease-in-out;
+}
+/* line 215, sass/style.scss */
+.post-pagination a.left {
+  background-image: url(images/left2.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+}
+/* line 222, sass/style.scss */
+.post-pagination a.right {
+  background-image: url(images/right2.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+}
+
+/* line 231, sass/style.scss */
+.post-cats ul {
+  display: inline-block;
+  list-style-type: none;
+  padding: 0;
+}
+/* line 236, sass/style.scss */
+.post-cats ul li {
+  margin-right: 5px;
+}
+/* line 238, sass/style.scss */
+.post-cats ul li a {
+  display: block;
+  background-color: #4C2A05;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 3px;
+}
+/* line 248, sass/style.scss */
+.post-cats ul li a:hover {
+  background-color: black;
+}
+
+/* line 255, sass/style.scss */
+.post-tags {
+  margin-bottom: 20px;
+}
+/* line 257, sass/style.scss */
+.post-tags a {
+  display: inline-block;
+  background-color: #4C2A05;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 3px;
+  margin-right: 3px;
+}
+/* line 268, sass/style.scss */
+.post-tags a:hover {
+  background-color: black;
+}
+
+/* SIDEBAR STYLING */
+/* line 276, sass/style.scss */
+.sidebar .widget .widget_title {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+/* line 281, sass/style.scss */
+.sidebar .widget ul {
+  padding-left: 5px;
+  list-style-type: disc;
+  list-style-position: inside;
+}
+/* line 286, sass/style.scss */
+.sidebar .widget ul li {
+  margin-bottom: 5px;
+}
+/* line 289, sass/style.scss */
+.sidebar .widget ul li a {
+  text-transform: uppercase;
+}
+
+/* ARCHIVES PAGE STYLES */
+/* line 299, sass/style.scss */
+.page-archives h2 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+/* line 304, sass/style.scss */
+.page-archives ul {
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0;
+}
+/* line 309, sass/style.scss */
+.page-archives ul li {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 16px;
+}
+/* line 315, sass/style.scss */
+.page-archives ul li:after {
+  content: " | ";
+}
+/* line 319, sass/style.scss */
+.page-archives ul li:last-child:after {
+  content: '';
+}
+
+/* 404 Page styling */
+/* line 326, sass/style.scss */
+.page-404 {
+  text-align: center;
+}

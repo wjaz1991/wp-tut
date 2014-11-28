@@ -1,0 +1,43 @@
+aside.widget_guest_blog_widget div#blogger-widget-content{
+    background-color: white;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+aside.widget_guest_blog_widget p {
+    color: #666;
+    padding: 10px 10px;
+    margin-bottom: 0 !important;
+}
+
+aside.widget_guest_blog_widget h1.widget-title {
+    margin-bottom: 0 !important;
+    line-height: 30px !important;
+    height: 30px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    overflow: hidden;
+    background-color: green;
+    border: 1px solid green;
+    text-transform: uppercase;
+    padding-left: 10px;
+}
+
+aside.widget_guest_blog_widget div#guest-blogger-btn {
+    text-align: center;
+    height: auto;
+}
+
+aside.widget_guest_blog_widget div#guest-blogger-btn a {
+    background-color: green;
+    color: white;
+    padding: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 5px 0;
+}

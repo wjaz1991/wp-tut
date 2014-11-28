@@ -1,0 +1,328 @@
+/*
+Theme Name: Galactic
+Theme URI: http://wjaz.pl
+Description: Galaxy inspired theme
+Version: 1.0
+Author: Wojciech Jazgara
+Author URI: http://wjaz.pl
+*/
+
+@import 'compass';
+
+@import 'partials/_variables.scss';
+
+.container-fluid {
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: $bg-color;
+  font-family: 'LatoLatin';
+}
+
+a {
+    color: black;
+}
+
+.clear, .group:after {
+  display: block;
+  clear: both;
+  content: '.';
+  visibility: hidden;
+  height: 0;
+}
+
+//main navigation
+#main-header {
+  height: $header-height;
+  background-color: $nav-color;
+  color: white;
+
+  #header-logo {
+    width: 20%;
+    float: left;
+    border-bottom: $magic-line-height solid black;
+    height: $header-height;
+
+    h1 {
+      font-size: $logo-height;
+      line-height: $header-height;
+      margin: auto;
+      padding-left: 15px;
+      color: #FF8B08;
+      font-weight: bold;
+    }
+  }
+
+  nav {
+    height: $header-height;
+    float: right;
+    width: 80%;
+    border-bottom: $magic-line-height solid black;
+
+    ul {
+      margin: 0;
+      list-style-type: none;
+      display: block;
+      position: relative;
+
+      li {
+        float: right;
+        display: inline-block;
+
+        a {
+          float: right;
+          display: block;
+          line-height: $header-height;
+          padding: 0 15px;
+          font-size: 25px;
+          text-transform: uppercase;
+          text-decoration: none;
+          color: $nav-link-font-color;
+          font-weight: bold;
+        }
+
+        a:hover {
+          background-color: $nav-link-hover-color;
+        }
+      }
+
+      li#magic-line {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 100px;
+        height: $magic-line-height;
+        background-color: red;
+      }
+    }
+  }
+}
+
+.search-form {
+  width: 100%;
+
+  form {
+    float: right;
+    padding: 5px 0 5px 0;
+  }
+}
+
+#page-wrap {
+  min-height: 100%;
+  margin-bottom: -$footer-height;
+}
+
+#page-wrap:after {
+  content: "";
+  display: block;
+  height: $footer-height;
+}
+
+footer {
+  border-top: $magic-line-height solid black;
+  background-color: $nav-color;
+  height: $footer-height;
+  color: $nav-link-font-color;
+  text-align: center;
+}
+
+.post-thumbnail-home {
+  width: auto;
+  height: 300px;
+  background-size: cover;
+  position: relative;
+}
+
+.overlay {
+    opacity: 0;
+}
+
+.post-thumbnail {
+    width: 100%;
+    margin: 0;
+    
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.post-thumbnail-home:hover {
+    .overlay {
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        opacity: 0.4;
+        position: absolute;
+        transition: opacity 0.5s ease-in-out;
+    }
+}
+
+#scrollUp {
+    background-image: url(images/top.png);
+    width: 38px;
+    height: 38px;
+    bottom: 5px;
+    right: 5px;
+}
+
+.pager {
+    li {
+        a {
+            background-color: $nav-color;
+            color: $nav-link-font-color;
+            border: 0 none;
+        }
+        
+        a:hover {
+            background-color: black;
+        }
+    }
+}
+
+.row{
+    overflow: hidden; 
+}
+
+[class*="col-"]{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}
+
+.post-pagination {
+    position: relative;
+    
+    a {
+        display: block;
+        background-color: $nav-link-font-color;
+        border-radius: 5px;
+        transition: background-color 0.5s ease-in-out;
+    }
+    
+    a:hover {
+        background-color: #666;
+        transition: background-color 0.5s ease-in-out;
+    }
+    
+    a.left {
+        background-image: url(images/left2.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+    }
+    
+    a.right {
+        background-image: url(images/right2.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+    }
+}
+
+.post-cats {
+    ul {
+        display: inline-block;
+        list-style-type: none;
+        padding: 0;
+        
+        li {
+            margin-right: 5px;
+            a {
+                display: block;
+                background-color: $nav-color;
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                border-radius: 4px;
+                padding: 3px;
+            }
+            
+            a:hover {
+                background-color: darken($nav-color, 20%);
+            }
+        }
+    }
+}
+
+.post-tags {
+    margin-bottom: 20px;
+    a {
+        display: inline-block;
+        background-color: $nav-color;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 4px;
+        padding: 3px;
+        margin-right: 3px;
+    }
+            
+    a:hover {
+        background-color: darken($nav-color, 20%);
+    }
+}
+
+/* SIDEBAR STYLING */
+.sidebar {
+    .widget {
+        .widget_title {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        ul {
+            padding-left: 5px;
+            list-style-type: disc;
+            list-style-position: inside;
+            
+            li {
+                margin-bottom: 5px;
+                
+                a {
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
+}
+
+/* ARCHIVES PAGE STYLES */
+.page-archives {
+    h2 {
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    
+    ul {
+        list-style-type: none;
+        list-style-position: inside;
+        padding: 0;
+        
+        li {
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        
+        li:after {
+            content: " | ";
+        }
+        
+        li:last-child:after {
+            content: '';
+        }
+    }
+}
+
+/* 404 Page styling */
+.page-404 {
+    text-align: center;
+}

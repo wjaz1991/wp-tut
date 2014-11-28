@@ -1,0 +1,18 @@
+/*
+FILE CONTAINING GLOBAL VARIABLES FOR THE WHOLE THEME
+*/
+
+//importing lato font
+@import url('fonts/LatoLatin/LatoLatin-Regular.css');
+
+//heights, widths, dimensions
+$header-height: 80px;
+$logo-height: 40px;
+$magic-line-height: 4px;
+$footer-height: 50px;
+
+//colors
+$bg-color: #F7FBC9;
+$nav-color: #4C2A05;
+$nav-link-font-color: #D8A166;
+$nav-link-hover-color: #000;
